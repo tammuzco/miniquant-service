@@ -1,4 +1,4 @@
-## Learning Service
+## Academy Cohort 11 - Niron - Final Project
 
 A service to learn about [Olas](https://olas.network/) agents and [Open Autonomy](https://github.com/valory-xyz/open-autonomy).
 

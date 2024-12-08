@@ -1,0 +1,71 @@
+alphabet_in:
+- CHECK_HISTORY
+- CHECK_LATE_ARRIVING_MESSAGE
+- CHECK_TIMEOUT
+- DONE
+- ERROR
+- FINALIZATION_FAILED
+- FINALIZE_TIMEOUT
+- INCORRECT_SERIALIZATION
+- INSUFFICIENT_FUNDS
+- NEGATIVE
+- NONE
+- NO_MAJORITY
+- RESET_AND_PAUSE_TIMEOUT
+- RESET_TIMEOUT
+- ROUND_TIMEOUT
+- SUSPICIOUS_ACTIVITY
+- TRANSACT
+- VALIDATE_TIMEOUT
+default_start_state: RegistrationStartupRound
+final_states: []
+label: DefiCollectorChainedSkillAbciApp
+start_states:
+- RegistrationRound
+- RegistrationStartupRound
+states:
+- CollectRandomnessRound
+- SelectKeeperRound
+- DefiLlamaPullRound
+- CheckLateTxHashesRound
+- CheckTransactionHistoryRound
+- CollectSignatureRound
+- DecisionMakingRound
+- FinalizationRound
+- RandomnessTransactionSubmissionRound
+- RegistrationRound
+- RegistrationStartupRound
+- ResetAndPauseRound
+- ResetRound
+- SelectKeeperTransactionSubmissionARound
+- SelectKeeperTransactionSubmissionBAfterTimeoutRound
+- SelectKeeperTransactionSubmissionBRound
+- SynchronizeLateMessagesRound
+- TxPreparationRound
+- PostPreparationRound
+- ValidateTransactionRound
+- ExecuteLLMRound
+- FinalLLMRound
+transition_func:
+    (RegistrationRound, DONE): CollectRandomnessRound
+    (RegistrationRound, NO_MAJORITY): RegistrationRound
+    (RegistrationStartupRound, DONE): DefiLlamaPullRound
+    (CollectRandomnessRound, DONE): SelectKeeperRound
+    (CollectRandomnessRound, NONE): CollectRandomnessRound
+    (CollectRandomnessRound, NO_MAJORITY): CollectRandomnessRound
+    (CollectRandomnessRound, ROUND_TIMEOUT): CollectRandomnessRound
+    (SelectKeeperRound, DONE): DefiLlamaPullRound
+    (SelectKeeperRound, NO_MAJORITY): CollectRandomnessRound
+    (SelectKeeperRound, ROUND_TIMEOUT): CollectRandomnessRound
+    (DefiLlamaPullRound, DONE): ExecuteLLMRound
+    (DefiLlamaPullRound, NO_MAJORITY): DefiLlamaPullRound
+    (DefiLlamaPullRound, ROUND_TIMEOUT): DefiLlamaPullRound
+    (ExecuteLLMRound, DONE): FinalLLMRound
+    (ExecuteLLMRound, NO_MAJORITY): ExecuteLLMRound
+    (ExecuteLLMRound, ROUND_TIMEOUT): ExecuteLLMRound
+    (FinalLLMRound, DONE): FinalLLMRound
+    (FinalLLMRound, NO_MAJORITY): ExecuteLLMRound
+    (FinalLLMRound, ROUND_TIMEOUT): ExecuteLLMRound
+    (ResetAndPauseRound, DONE): CollectRandomnessRound
+    (ResetAndPauseRound, NO_MAJORITY): RegistrationRound
+    (ResetAndPauseRound, RESET_AND_PAUSE_TIMEOUT): RegistrationRound

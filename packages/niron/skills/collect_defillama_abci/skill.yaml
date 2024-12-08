@@ -1,0 +1,186 @@
+name: collect_defillama_abci
+author: niron
+version: 0.1.0
+type: skill
+description: A learning skill.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeicwmcykypaxenq4dtbq2ksmdcpsal7qjlw57kx2h4skyev63ra2ba
+  behaviours.py: bafybeietxizz6zrz4lbjlldws5c26h3wqr7ntc5ohyssu3i4lrbwxoyub4
+  dialogues.py: bafybeifqjbumctlffx2xvpga2kcenezhe47qhksvgmaylyp5ypwqgfar5u
+  handlers.py: bafybeigjadr4thz6hfpfx5abezbwnqhbxmachf4efasrn4z2vqhsqgnyvi
+  models.py: bafybeiho3ev7kctdxodbleojm633sg77apfns2xlgyc6opqabk7d5we5hu
+  payloads.py: bafybeibtqyag2ou2z5syqkb7levss4bej6a3uhi2lo4bmtfhdr77nrc74e
+  rounds.py: bafybeidezdv7jtt4g5c3ejfoccpqyuoexzumf5v3nckisxbayqoxx5b7re
+fingerprint_ignore_patterns: []
+connections: []
+contracts:
+- valory/gnosis_safe:0.1.0:bafybeib375xmvcplw7ageic2np3hq4yqeijrvd5kl7rrdnyvswats6ngmm
+- valory/erc20:0.1.0:bafybeiddyegm64iawk4kyesuebhxynz7rfjq7q5f2bu6wkuehg6rbrx7be
+- valory/multisend:0.1.0:bafybeig5byt5urg2d2bsecufxe5ql7f4mezg3mekfleeh32nmuusx66p4y
+protocols:
+- valory/contract_api:1.0.0:bafybeidgu7o5llh26xp3u3ebq3yluull5lupiyeu6iooi2xyymdrgnzq5i
+- valory/ledger_api:1.0.0:bafybeihdk6psr4guxmbcrc26jr2cbgzpd5aljkqvpwo64bvaz7tdti2oni
+skills:
+- valory/abstract_round_abci:0.1.0:bafybeiajjzuh6vf23crp55humonknirvv2f4s3dmdlfzch6tc5ow52pcgm
+- valory/transaction_settlement_abci:0.1.0:bafybeielv6eivt2z6nforq43xewl2vmpfwpdu2s2vfogobziljnwsclmlm
+behaviours:
+  main:
+    args: {}
+    class_name: LearningRoundBehaviour
+handlers:
+  abci:
+    args: {}
+    class_name: ABCIHandler
+  contract_api:
+    args: {}
+    class_name: ContractApiHandler
+  http:
+    args: {}
+    class_name: HttpHandler
+  ipfs:
+    args: {}
+    class_name: IpfsHandler
+  ledger_api:
+    args: {}
+    class_name: LedgerApiHandler
+  signing:
+    args: {}
+    class_name: SigningHandler
+  tendermint:
+    args: {}
+    class_name: TendermintHandler
+models:
+  abci_dialogues:
+    args: {}
+    class_name: AbciDialogues
+  benchmark_tool:
+    args:
+      log_dir: /tmp
+    class_name: BenchmarkTool
+  contract_api_dialogues:
+    args: {}
+    class_name: ContractApiDialogues
+  http_dialogues:
+    args: {}
+    class_name: HttpDialogues
+  ipfs_dialogues:
+    args: {}
+    class_name: IpfsDialogues
+  ledger_api_dialogues:
+    args: {}
+    class_name: LedgerApiDialogues
+  params:
+    args:
+      cleanup_history_depth: 1
+      cleanup_history_depth_current: null
+      drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+      finalize_timeout: 60.0
+      genesis_config:
+        chain_id: chain-c4daS1
+        consensus_params:
+          block:
+            max_bytes: '22020096'
+            max_gas: '-1'
+            time_iota_ms: '1000'
+          evidence:
+            max_age_duration: '172800000000000'
+            max_age_num_blocks: '100000'
+            max_bytes: '1048576'
+          validator:
+            pub_key_types:
+            - ed25519
+          version: {}
+        genesis_time: '2022-05-20T16:00:21.735122717Z'
+        voting_power: '10'
+      history_check_timeout: 1205
+      ipfs_domain_name: null
+      keeper_allowed_retries: 3
+      keeper_timeout: 30.0
+      max_attempts: 10
+      max_healthcheck: 120
+      on_chain_service_id: null
+      request_retry_delay: 1.0
+      request_timeout: 10.0
+      reset_pause_duration: 10
+      reset_tendermint_after: 2
+      retry_attempts: 400
+      retry_timeout: 3
+      round_timeout_seconds: 30.0
+      service_id: learning
+      service_registry_address: null
+      setup:
+        all_participants:
+        - '0x0000000000000000000000000000000000000000'
+        consensus_threshold: null
+        safe_contract_address: '0x0000000000000000000000000000000000000000'
+      share_tm_config_on_startup: false
+      sleep_time: 1
+      tendermint_check_sleep_delay: 3
+      tendermint_com_url: http://localhost:8080
+      tendermint_max_retries: 5
+      tendermint_p2p_url: localhost:26656
+      tendermint_url: http://localhost:26657
+      tx_timeout: 10.0
+      validate_timeout: 1205
+      service_endpoint_base: https://learning.autonolas.tech/
+      coingecko_price_template: https://api.coingecko.com/api/v3/simple/price?ids=autonolas&vs_currencies=usd&x_cg_demo_api_key={api_key}
+      coingecko_api_key: null
+      openai_api_key: null
+      transfer_target_address: '0x0000000000000000000000000000000000000000'
+      olas_token_address: '0xcE11e14225575945b8E6Dc0D4F2dD4C570f79d9f'
+      multisend_address: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
+    class_name: Params
+  coingecko_specs:
+    args:
+      api_id: coingecko
+      headers:
+        Accept: application/json
+      method: GET
+      parameters:
+        ids: autonolas
+        vs_currencies: usd
+        x_cg_demo_api_key: null
+      response_key: autonolas
+      response_type: dict
+      retries: 5
+      url: https://api.coingecko.com/api/v3/simple/price
+    class_name: CoingeckoSpecs
+  defillama_specs:
+    args:
+      api_id: defillama
+      headers: {}
+      method: GET
+      parameters: {}
+      response_key: null
+      response_type: dict
+      retries: 5
+      url: https://stablecoins.llama.fi/stablecoincharts/all?stablecoin=1
+    class_name: DefiLlamaSpecs
+  randomness_api:
+    args:
+      api_id: cloudflare
+      headers: {}
+      method: GET
+      parameters: {}
+      response_key: null
+      response_type: dict
+      retries: 5
+      url: https://drand.cloudflare.com/public/latest
+    class_name: RandomnessApi
+  requests:
+    args: {}
+    class_name: Requests
+  signing_dialogues:
+    args: {}
+    class_name: SigningDialogues
+  state:
+    args: {}
+    class_name: SharedState
+  tendermint_dialogues:
+    args: {}
+    class_name: TendermintDialogues
+dependencies: {}
+is_abstract: true
+customs: []

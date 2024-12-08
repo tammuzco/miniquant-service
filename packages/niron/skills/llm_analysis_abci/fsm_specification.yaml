@@ -1,0 +1,18 @@
+alphabet_in:
+- DONE
+- NO_MAJORITY
+- ROUND_TIMEOUT
+default_start_state: ExecuteLLMRound
+final_states:
+- FinalLLMRound
+label: LLMAnalysisAbciApp
+start_states:
+- ExecuteLLMRound
+states:
+- ExecuteLLMRound
+- FinalLLMRound
+
+transition_func:
+    (ExecuteLLMRound, DONE): FinalLLMRound
+    (ExecuteLLMRound, NO_MAJORITY): ExecuteLLMRound
+    (ExecuteLLMRound, ROUND_TIMEOUT): ExecuteLLMRound

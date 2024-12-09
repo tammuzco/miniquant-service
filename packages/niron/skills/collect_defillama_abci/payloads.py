@@ -42,8 +42,14 @@ class SelectKeeperPayload(BaseTxPayload):
 class DefiLlamaPullPayload(BaseTxPayload):
     """Represent a transaction payload for the pulling data from DefiLlama."""
 
-    stablecoins_history: Optional[str]
-    stablecoins_ipfs_hash: Optional[str]
+    stablecoins_history: Optional[str] = None
+    stablecoins_ipfs_hash: Optional[str] = None
+
+@dataclass(frozen=True)
+class ExecuteLLMPayload(BaseTxPayload):
+    """Represent a response of the llm analysis."""
+
+    llm_response: Optional[str] = None
 
 @dataclass(frozen=True)
 class DecisionMakingPayload(BaseTxPayload):

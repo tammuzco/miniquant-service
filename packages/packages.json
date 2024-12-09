@@ -1,10 +1,9 @@
 {
     "dev": {
-        "skill/niron/llm_analysis_abci/0.1.0": "bafybeifqk6eooyankofcjuvlsgh3hmegjptsjonesnvtiufbf32ad72sgy",
-        "skill/niron/miniquant_abci/0.1.0": "bafybeiath2ogqf7nwtedize7axxhvm2ww2gi3m56f7shmk3iorh3ynkrsm",
-        "skill/niron/collect_defillama_abci/0.1.0": "bafybeigkdaewxyhanjeg46vfholportma66kesryxrhluvht5j5ip7577m",
-        "agent/niron/miniquant_agent/0.1.0": "bafybeiccwy57smszyzk7d2pcjrcbnegafetwu7x3nubjeknh5prea5mhe4",
-        "service/niron/miniquant_service/0.1.0": "bafybeihgddi43bxujd3zgwi6cjs46bfyfppiiksm2cvf4tntloh7kva46y"
+        "skill/niron/miniquant_abci/0.1.0": "bafybeihm7lmkrxfkh4coipr2pvvgxyo2zxt4g7xjgd2heruutdauet24r4",
+        "skill/niron/collect_defillama_abci/0.1.0": "bafybeih2qdbdea5pmrqzk5hlivgt4fb7wfhsvcu4baxzvgsx3uex7kdzfa",
+        "agent/niron/miniquant_agent/0.1.0": "bafybeicpy2r3zsuep6rc74k7fmofxvliddti7x26hymcu63vacnlswtrqu",
+        "service/niron/miniquant_service/0.1.0": "bafybeigifhuyx3wkbbpwo6vrn2ocgyzjnlg2vtx5cej3oobysiu5wrjdnq"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi",

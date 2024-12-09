@@ -32,9 +32,8 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeidz54kvxhbdmpruzguuzzq7bjg4pekjb5amqobkxoy4oqknnobopu
 - valory/abstract_round_abci:0.1.0:bafybeiajjzuh6vf23crp55humonknirvv2f4s3dmdlfzch6tc5ow52pcgm
-- niron/llm_analysis_abci:0.1.0:bafybeifqk6eooyankofcjuvlsgh3hmegjptsjonesnvtiufbf32ad72sgy
-- niron/miniquant_abci:0.1.0:bafybeiath2ogqf7nwtedize7axxhvm2ww2gi3m56f7shmk3iorh3ynkrsm
-- niron/collect_defillama_abci:0.1.0:bafybeigkdaewxyhanjeg46vfholportma66kesryxrhluvht5j5ip7577m
+- niron/miniquant_abci:0.1.0:bafybeihm7lmkrxfkh4coipr2pvvgxyo2zxt4g7xjgd2heruutdauet24r4
+- niron/collect_defillama_abci:0.1.0:bafybeih2qdbdea5pmrqzk5hlivgt4fb7wfhsvcu4baxzvgsx3uex7kdzfa
 - valory/registration_abci:0.1.0:bafybeiffipsowrqrkhjoexem7ern5ob4fabgif7wa6gtlszcoaop2e3oey
 - valory/reset_pause_abci:0.1.0:bafybeif4lgvbzsmzljesxbphycdv52ka7qnihyjrjpfaseclxadcmm6yiq
 - valory/termination_abci:0.1.0:bafybeiekkpo5qef5zaeagm3si6v45qxcojvtjqe4a5ceccvk4q7k3xi3bi

@@ -26,7 +26,6 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     BaseBehaviour,
 )
 from packages.niron.skills.collect_defillama_abci.behaviours import DefiCollectorRoundBehaviour
-from packages.niron.skills.llm_analysis_abci.behaviours import LLMAnalysisRoundBehaviour
 from packages.niron.skills.miniquant_abci.composition import (
     DefiCollectorChainedSkillAbciApp,
 )
@@ -57,6 +56,5 @@ class MiniQuantConsensusBehaviour(AbstractRoundBehaviour):
         *TransactionSettlementRoundBehaviour.behaviours,
         *TerminationAbciBehaviours.behaviours,
         *DefiCollectorRoundBehaviour.behaviours,
-        *LLMAnalysisRoundBehaviour.behaviours,
     }
     background_behaviours_cls = {BackgroundBehaviour}

@@ -20,7 +20,6 @@
 """This package contains round behaviours of LearningChainedSkillAbciApp."""
 
 import packages.niron.skills.collect_defillama_abci.rounds as CollectDefiApp
-import packages.niron.skills.llm_analysis_abci.rounds as LlmAnalysisAbci
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
 import packages.valory.skills.reset_pause_abci.rounds as ResetAndPauseAbci
 import packages.valory.skills.transaction_settlement_abci.rounds as TxSettlementAbci
@@ -45,10 +44,19 @@ from packages.valory.skills.termination_abci.rounds import (
 #     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 # }
 
+# abci_app_transition_mapping: AbciAppTransitionMapping = {
+#     RegistrationAbci.FinishedRegistrationRound: CollectDefiApp.CollectRandomnessRound,
+#     CollectDefiApp.DecisionMakingRound: ResetAndPauseAbci.ResetAndPauseRound,
+#     ResetAndPauseAbci.FinishedResetAndPauseRound: CollectDefiApp.CollectRandomnessRound,
+#     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
+# }
+
 abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: CollectDefiApp.CollectRandomnessRound,
-    CollectDefiApp.FinishedTxPreparationRound: LlmAnalysisAbci.ExecuteLLMRound,
-    LlmAnalysisAbci.FinalLLMRound: ResetAndPauseAbci.ResetAndPauseRound,
+    CollectDefiApp.FinishedDecisionMakingRound: ResetAndPauseAbci.ResetAndPauseRound,
+    CollectDefiApp.FinishedTxPreparationRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
+    TxSettlementAbci.FinishedTransactionSubmissionRound: ResetAndPauseAbci.ResetAndPauseRound,
+    TxSettlementAbci.FailedRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: CollectDefiApp.CollectRandomnessRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 }
@@ -63,7 +71,6 @@ DefiCollectorChainedSkillAbciApp = chain(
     (
         RegistrationAbci.AgentRegistrationAbciApp,
         CollectDefiApp.CollectDefiApp,
-        LlmAnalysisAbci.LLMAnalysisAbciApp,
         TxSettlementAbci.TransactionSubmissionAbciApp,
         ResetAndPauseAbci.ResetPauseAbciApp,
     ),

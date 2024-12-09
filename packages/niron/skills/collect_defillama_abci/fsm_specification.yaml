@@ -1,53 +1,26 @@
 alphabet_in:
-- CHECK_HISTORY
-- CHECK_LATE_ARRIVING_MESSAGE
-- CHECK_TIMEOUT
 - DONE
 - ERROR
-- FINALIZATION_FAILED
-- FINALIZE_TIMEOUT
-- INCORRECT_SERIALIZATION
-- INSUFFICIENT_FUNDS
-- NEGATIVE
-- NONE
 - NO_MAJORITY
-- RESET_AND_PAUSE_TIMEOUT
-- RESET_TIMEOUT
 - ROUND_TIMEOUT
-- SUSPICIOUS_ACTIVITY
 - TRANSACT
-- VALIDATE_TIMEOUT
-default_start_state: RegistrationStartupRound
-final_states: []
-label: DefiCollectorChainedSkillAbciApp
+default_start_state: DefiLlamaPullRound
+final_states:
+- FinishedDecisionMakingRound
+- FinishedTxPreparationRound
+label: CollectDefiApp
 start_states:
-- RegistrationRound
-- RegistrationStartupRound
+- CollectRandomnessRound
 states:
 - CollectRandomnessRound
 - SelectKeeperRound
 - DefiLlamaPullRound
-- CheckLateTxHashesRound
-- CheckTransactionHistoryRound
-- CollectSignatureRound
-- DecisionMakingRound
-- FinalizationRound
-- RandomnessTransactionSubmissionRound
-- RegistrationRound
-- RegistrationStartupRound
-- ResetAndPauseRound
-- ResetRound
-- SelectKeeperTransactionSubmissionARound
-- SelectKeeperTransactionSubmissionBAfterTimeoutRound
-- SelectKeeperTransactionSubmissionBRound
-- SynchronizeLateMessagesRound
-- TxPreparationRound
-- ValidateTransactionRound
 - ExecuteLLMRound
+- DecisionMakingRound
+- FinishedDecisionMakingRound
+- FinishedTxPreparationRound
+- TxPreparationRound
 transition_func:
-    (RegistrationRound, DONE): CollectRandomnessRound
-    (RegistrationRound, NO_MAJORITY): RegistrationRound
-    (RegistrationStartupRound, DONE): DefiLlamaPullRound
     (CollectRandomnessRound, DONE): SelectKeeperRound
     (CollectRandomnessRound, NONE): CollectRandomnessRound
     (CollectRandomnessRound, NO_MAJORITY): CollectRandomnessRound
@@ -66,9 +39,7 @@ transition_func:
     (DecisionMakingRound, NO_MAJORITY): DecisionMakingRound
     (DecisionMakingRound, ROUND_TIMEOUT): DecisionMakingRound
     (DecisionMakingRound, TRANSACT): TxPreparationRound
-    (TxPreparationRound, DONE): ResetAndPauseRound
+    (TxPreparationRound, DONE): CollectRandomnessRound
     (TxPreparationRound, NO_MAJORITY): TxPreparationRound
     (TxPreparationRound, ROUND_TIMEOUT): TxPreparationRound
-    (ResetAndPauseRound, DONE): CollectRandomnessRound
-    (ResetAndPauseRound, NO_MAJORITY): RegistrationRound
-    (ResetAndPauseRound, RESET_AND_PAUSE_TIMEOUT): RegistrationRound
+

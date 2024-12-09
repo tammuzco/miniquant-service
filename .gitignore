@@ -35,3 +35,4 @@ keys.json
 ethereum_private_key.txt
 __pycache__/
 .env
+packages/valory/__init__.py

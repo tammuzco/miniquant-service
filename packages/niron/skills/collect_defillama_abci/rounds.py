@@ -38,6 +38,7 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.niron.skills.collect_defillama_abci.payloads import (
     CollectRandomnessPayload,
     DefiLlamaPullPayload,
+    ExecuteLLMPayload,
     DecisionMakingPayload,
     SelectKeeperPayload,
     TxPreparationPayload,
@@ -101,6 +102,11 @@ class SynchronizedData(BaseSynchronizedData):
     def stablecoins_ipfs_hash(self) -> Optional[str]:
         """Get the Stablecoins IPFS Hash."""
         return self.db.get("stablecoins_ipfs_hash", None)
+    
+    @property
+    def llm_response(self) -> Optional[str]:
+        """Get the LLM Response."""
+        return self.db.get("llm_response", None)
 
     @property
     def participant_to_data_round(self) -> DeserializedCollection:
@@ -151,7 +157,7 @@ class SelectKeeperRound(CollectSameUntilThresholdRound):
 
     # Event.DONE, Event.ERROR, Event.TRANSACT, Event.ROUND_TIMEOUT  # this needs to be referenced for static checkers
 
-class DefiLlamaPullRound(OnlyKeeperSendsRound):
+class DefiLlamaPullRound(CollectSameUntilThresholdRound):
     """DefiLlamaPullRound"""
 
     payload_class = DefiLlamaPullPayload
@@ -162,6 +168,21 @@ class DefiLlamaPullRound(OnlyKeeperSendsRound):
     selection_key = (
         get_name(SynchronizedData.stablecoins_history),
         get_name(SynchronizedData.stablecoins_ipfs_hash),
+    )
+
+    # Event.ROUND_TIMEOUT  # this needs to be referenced for static checkers
+
+class ExecuteLLMRound(CollectSameUntilThresholdRound):
+    """ExecuteLLMRound"""
+
+    payload_class = ExecuteLLMPayload
+    synchronized_data_class = SynchronizedData
+    done_event = Event.DONE
+    none_event = Event.NONE
+    no_majority_event = Event.NO_MAJORITY
+    collection_key = get_name(SynchronizedData.stablecoins_history)
+    selection_key = (
+        get_name(SynchronizedData.llm_response)
     )
 
     # Event.ROUND_TIMEOUT  # this needs to be referenced for static checkers
@@ -234,25 +255,25 @@ class CollectDefiApp(AbciApp[Event]):
         DefiLlamaPullRound: {
             Event.NO_MAJORITY: DefiLlamaPullRound,
             Event.ROUND_TIMEOUT: DefiLlamaPullRound,
-            Event.DONE: FinishedDecisionMakingRound,
+            Event.DONE: ExecuteLLMRound,
         },
-        # DecisionMakingRound: {
-        #     Event.NO_MAJORITY: DecisionMakingRound,
-        #     Event.ROUND_TIMEOUT: DecisionMakingRound,
-        #     Event.DONE: FinishedDecisionMakingRound,
-        #     Event.ERROR: FinishedDecisionMakingRound,
-        #     Event.TRANSACT: TxPreparationRound,
-        # },
-        # TxPreparationRound: {
-        #     Event.NO_MAJORITY: TxPreparationRound,
-        #     Event.ROUND_TIMEOUT: TxPreparationRound,
-        #     Event.DONE: PostPreparationRound,
-        # },
-        # PostPreparationRound: {
-        #     Event.NO_MAJORITY: PostPreparationRound,
-        #     Event.ROUND_TIMEOUT: PostPreparationRound,
-        #     Event.DONE: FinishedTxPreparationRound,
-        # },
+        ExecuteLLMRound: {
+            Event.NO_MAJORITY: ExecuteLLMRound,
+            Event.ROUND_TIMEOUT: ExecuteLLMRound,
+            Event.DONE: DecisionMakingRound,
+        },
+        DecisionMakingRound: {
+            Event.NO_MAJORITY: DecisionMakingRound,
+            Event.ROUND_TIMEOUT: DecisionMakingRound,
+            Event.DONE: FinishedDecisionMakingRound,
+            Event.ERROR: FinishedDecisionMakingRound,
+            Event.TRANSACT: TxPreparationRound,
+        },
+        TxPreparationRound: {
+            Event.NO_MAJORITY: TxPreparationRound,
+            Event.ROUND_TIMEOUT: TxPreparationRound,
+            Event.DONE: FinishedTxPreparationRound,
+        },
         FinishedDecisionMakingRound: {},
         FinishedTxPreparationRound: {},
     }
@@ -265,6 +286,7 @@ class CollectDefiApp(AbciApp[Event]):
     db_pre_conditions: Dict[AppState, Set[str]] = {
         CollectRandomnessRound: set(),
         DefiLlamaPullRound: set(),
+        ExecuteLLMRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedDecisionMakingRound: set(),

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
-#   Copyright 2024 niron
+#   Copyright 2024 Valory AG
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -17,32 +17,35 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains a scaffold of a handler."""
+"""This module contains the handlers for the skill of LearningAbciApp."""
 
-from typing import Optional
+from packages.valory.skills.abstract_round_abci.handlers import (
+    ABCIRoundHandler as BaseABCIRoundHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    ContractApiHandler as BaseContractApiHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    HttpHandler as BaseHttpHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    IpfsHandler as BaseIpfsHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    LedgerApiHandler as BaseLedgerApiHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    SigningHandler as BaseSigningHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    TendermintHandler as BaseTendermintHandler,
+)
 
-from aea.configurations.base import PublicId
-from aea.protocols.base import Message
-from aea.skills.base import Handler
 
-
-class MyScaffoldHandler(Handler):
-    """This class scaffolds a handler."""
-
-    SUPPORTED_PROTOCOL = None  # type: Optional[PublicId]
-
-    def setup(self) -> None:
-        """Implement the setup."""
-        raise NotImplementedError
-
-    def handle(self, message: Message) -> None:
-        """
-        Implement the reaction to an envelope.
-
-        :param message: the message
-        """
-        raise NotImplementedError
-
-    def teardown(self) -> None:
-        """Implement the handler teardown."""
-        raise NotImplementedError
+ABCIHandler = BaseABCIRoundHandler
+HttpHandler = BaseHttpHandler
+SigningHandler = BaseSigningHandler
+LedgerApiHandler = BaseLedgerApiHandler
+ContractApiHandler = BaseContractApiHandler
+TendermintHandler = BaseTendermintHandler
+IpfsHandler = BaseIpfsHandler

@@ -54,6 +54,7 @@ from packages.niron.skills.collect_defillama_abci.payloads import (
     CollectRandomnessPayload,
     DefiLlamaPullPayload,
     DecisionMakingPayload,
+    ExecuteLLMPayload,
     SelectKeeperPayload,
     TxPreparationPayload,
 )
@@ -63,6 +64,7 @@ from packages.niron.skills.collect_defillama_abci.rounds import (
     DecisionMakingRound,
     Event,
     CollectDefiApp,
+    ExecuteLLMRound,
     SelectKeeperRound,
     SynchronizedData,
     TxPreparationRound,
@@ -72,7 +74,8 @@ from packages.valory.skills.transaction_settlement_abci.payload_tools import (
 )
 from packages.valory.skills.transaction_settlement_abci.rounds import TX_HASH_LENGTH
 
-
+from packages.niron.skills.collect_defillama_abci.ml.preprocessing import preprocess_stablecoin_data
+from packages.niron.skills.collect_defillama_abci.ml.stats import apply_holtwinters
 
 # Define some constants
 ZERO_VALUE = 0
@@ -83,6 +86,33 @@ SAFE_GAS = 0
 VALUE_KEY = "value"
 TO_ADDRESS_KEY = "to_address"
 METADATA_FILENAME = "metadata.json"
+
+SYSTEM_MESSAGE = """You are a statistical data scientist.
+                You are tasked with providing analysis on the risk and opportunity of the DeFi sector in the near terms.
+                Based on the following a trend statistics and Holt Winters function on the global stablecoin market.
+                Positive trend in the stablecoin market represents new money inflows into the DeFi sector.
+                Analyze the signals and provide a recommendation, always reply within a strictly `JSON` format.
+                Do not use markdown or formatting, your output is chained in a data pipeline, use strict data formats.
+                - signal: string(Enum): bullish | bearish | neutral,
+                - confidence: <float between 0 and 1>
+                - forecast: <string: commentary>"""
+
+USER_PROMPT = """
+    The recent analysis of the stablecoin market based on Holt-Winters forecasting:
+    
+    Model Parameters:
+    - Trend Direction: {trend_direction}
+    - Trend Strength: {trend_strength:.2%}
+    - Forecast Mean: ${forecast_mean:,.2f}
+    - Last Actual Value: ${last_actual_value:,.2f}
+    - Model Confidence (Alpha): {alpha:.3f}
+    - Trend Factor (Beta): {beta:.3f}
+    - Seasonal Factor (Gamma): {gamma:.3f}
+    
+    Based on these metrics, what is your market recommendation? 
+    Please provide a signal (bullish/bearish/neutral) with confidence level and explanation.
+    """
+
 
 class DefiCollectorBaseBehaviour(BaseBehaviour, ABC):  # pylint: disable=too-many-ancestors
     """Base behaviour for the learning_abci behaviours."""
@@ -101,11 +131,6 @@ class DefiCollectorBaseBehaviour(BaseBehaviour, ABC):  # pylint: disable=too-man
     def local_state(self) -> SharedState:
         """Return the local state of this particular agent."""
         return cast(SharedState, self.context.state)
-
-    @property
-    def coingecko_specs(self) -> CoingeckoSpecs:
-        """Get the Coingecko api specs."""
-        return self.context.coingecko_specs
 
     @property
     def defillama_specs(self) -> DefiLlamaSpecs:
@@ -208,7 +233,7 @@ class SelectKeeperBehaviour(DefiCollectorBaseBehaviour, ABC):
 
         self.set_done()
 
-class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour): # pylint: disable=too-many-ancestors
+class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour, ABC): # pylint: disable=too-many-ancestors
     """DefiLlamaPullBehaviour"""
 
     matching_round: Type[AbstractRound] = DefiLlamaPullRound
@@ -221,7 +246,6 @@ class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour): # pylint: disable=too-
             self.context.logger.info(f"Starting DefiLlamaPullBehaviour from Agent: {sender}")
             stablecoins_data = yield from self.get_stablecoins_history()
             self.context.logger.info(f"Attempting upload to IPFS")
-            # ipfs_hash = yield from self.send_tvl_to_ipfs(tvl)
 
             ipfs_hash = yield from self.send_stablecoins_to_ipfs(stablecoins_data)
 
@@ -230,9 +254,9 @@ class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour): # pylint: disable=too-
                 stablecoins_history=str(stablecoins_data),
                 stablecoins_ipfs_hash=ipfs_hash)
          
-        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
-            yield from self.send_a2a_transaction(payload)
-            yield from self.wait_until_round_end()
+
+        yield from self.send_a2a_transaction(payload)
+        yield from self.wait_until_round_end()
      
         self.set_done()
 
@@ -241,8 +265,7 @@ class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour): # pylint: disable=too-
         self.context.logger.info("Attempting to fetch Stablecoins Data")
         specs = self.defillama_specs.get_spec()
         raw_response = yield from self.get_http_response(**specs)
-        # stablecoins_history = self.defillama_specs.process_response(raw_response)
-        stablecoins_history = raw_response.body
+        stablecoins_history = eval(raw_response.body)
     
         self.context.logger.info(f"Got Stablecoins Data Example in place 0: {stablecoins_history[0]}")
 
@@ -259,6 +282,69 @@ class DefiLlamaPullBehaviour(DefiCollectorBaseBehaviour): # pylint: disable=too-
 
         return stablecoins_ipfs_hash
 
+class ExecuteLLMBehaviour(DefiCollectorBaseBehaviour):
+    """PostPreparationBehaviour"""
+
+    matching_round = ExecuteLLMRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+        
+        raw_data = self.synchronized_data.stablecoins_history
+        
+        # Preprocess the data
+        df = preprocess_stablecoin_data(raw_data)
+        
+        # Apply Holt-Winters
+        model_params = apply_holtwinters(df)
+
+        # Prepare the prompt
+        formatted_prompt = USER_PROMPT.format(**model_params)
+        
+        # Get LLM response
+        response = self.get_llm_response(
+            system_message=SYSTEM_MESSAGE,
+            user_prompt=formatted_prompt
+        )
+
+        if response:
+            self.context.logger.info(f'########### LLM Response ##########\n{response}')
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            sender = self.context.agent_address
+            payload = ExecuteLLMPayload(
+                sender=sender, 
+                llm_response=response, 
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    # Not generator method
+    def get_llm_response(self, system_message: str, user_prompt: str) -> str:
+        """Get a response from the LLM."""
+        client = OpenAI(api_key=self.params.openai_api_key)
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_prompt},
+        ]
+        response = client.chat.completions.create(
+            model='gpt-4-turbo',
+            messages=messages,
+            temperature=0.7,
+            n=1,
+            timeout=120,
+            stop=None,
+        )
+
+        if response:
+            return response.choices[0].message.content
+        else:
+            return False
+
 class DecisionMakingBehaviour(
     DefiCollectorBaseBehaviour
 ):  # pylint: disable=too-many-ancestors
@@ -272,11 +358,15 @@ class DecisionMakingBehaviour(
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             sender = self.context.agent_address
 
-            # Make a decision: either transact or not
-            event = Event.TRANSACT.value #yield from self.get_next_event()
+            llm_analysis = eval(self.synchronized_data.llm_response)
+            
+            if llm_analysis['signal'] == 'bullish' and llm_analysis['confidence'] > 0.7:
+                self.context.logger.info("LLM Response Bullish. Transacting.")
+                event = Event.TRANSACT.value
+            else:
+                event = Event.DONE.value
 
             self.context.logger.info(f"Agent {sender} decided to {event}.")
-
             payload = DecisionMakingPayload(sender=sender, event=event)
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -284,16 +374,6 @@ class DecisionMakingBehaviour(
             yield from self.wait_until_round_end()
 
         self.set_done()
-
-    def get_next_event(self) -> Generator[None, None, str]:
-        """Get the next event: decide whether ot transact or not based on some data."""
-
-        self.context.logger.info("Number is even. Transacting.")
-        return Event.TRANSACT.value
-
-        # Otherwise we send the DONE event
-        # self.context.logger.info("Number is odd. Not transacting.")
-        # return Event.DONE.value
 
 class TxPreparationBehaviour(
     DefiCollectorBaseBehaviour
@@ -570,6 +650,7 @@ class DefiCollectorRoundBehaviour(AbstractRoundBehaviour):
         CollectRandomnessBehaviour,
         SelectKeeperBehaviour,
         DefiLlamaPullBehaviour,
+        ExecuteLLMBehaviour,
         DecisionMakingBehaviour,
         TxPreparationBehaviour,
     ]

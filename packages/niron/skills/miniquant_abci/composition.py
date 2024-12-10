@@ -34,28 +34,13 @@ from packages.valory.skills.termination_abci.rounds import (
     TerminationAbciApp,
 )
 
-# abci_app_transition_mapping: AbciAppTransitionMapping = {
-#     RegistrationAbci.FinishedRegistrationRound: LearningAbci.DataPullRound,
-#     LearningAbci.FinishedDecisionMakingRound: ResetAndPauseAbci.ResetAndPauseRound,
-#     LearningAbci.FinishedTxPreparationRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
-#     TxSettlementAbci.FinishedTransactionSubmissionRound: ResetAndPauseAbci.ResetAndPauseRound,
-#     TxSettlementAbci.FailedRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
-#     ResetAndPauseAbci.FinishedResetAndPauseRound: LearningAbci.DataPullRound,
-#     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
-# }
-
-# abci_app_transition_mapping: AbciAppTransitionMapping = {
-#     RegistrationAbci.FinishedRegistrationRound: CollectDefiApp.CollectRandomnessRound,
-#     CollectDefiApp.DecisionMakingRound: ResetAndPauseAbci.ResetAndPauseRound,
-#     ResetAndPauseAbci.FinishedResetAndPauseRound: CollectDefiApp.CollectRandomnessRound,
-#     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
-# }
-
 abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: CollectDefiApp.CollectRandomnessRound,
-    CollectDefiApp.FinishedDecisionMakingRound: ResetAndPauseAbci.ResetAndPauseRound,
+    # CollectDefiApp.FinishedTxPreparationRound: ResetAndPauseAbci.ResetAndPauseRound,
     CollectDefiApp.FinishedTxPreparationRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
     TxSettlementAbci.FinishedTransactionSubmissionRound: ResetAndPauseAbci.ResetAndPauseRound,
+    # CollectDefiApp.FinishedTxPreparationRound: CollectDefiApp.CollectRandomnessRound,
+    # TxSettlementAbci.FinishedTransactionSubmissionRound: ResetAndPauseAbci.ResetAndPauseRound,
     TxSettlementAbci.FailedRound: TxSettlementAbci.RandomnessTransactionSubmissionRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: CollectDefiApp.CollectRandomnessRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,

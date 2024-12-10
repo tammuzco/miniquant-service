@@ -34,12 +34,12 @@ transition_func:
     (ExecuteLLMRound, DONE): DecisionMakingRound
     (ExecuteLLMRound, NO_MAJORITY): ExecuteLLMRound
     (ExecuteLLMRound, ROUND_TIMEOUT): ExecuteLLMRound
-    (DecisionMakingRound, DONE): FinishedDecisionMakingRound
-    (DecisionMakingRound, ERROR): FinishedDecisionMakingRound
+    (DecisionMakingRound, DONE): TxPreparationRound
+    (DecisionMakingRound, ERROR): DecisionMakingRound
     (DecisionMakingRound, NO_MAJORITY): DecisionMakingRound
     (DecisionMakingRound, ROUND_TIMEOUT): DecisionMakingRound
     (DecisionMakingRound, TRANSACT): TxPreparationRound
-    (TxPreparationRound, DONE): CollectRandomnessRound
+    (TxPreparationRound, DONE): FinishedTxPreparationRound
     (TxPreparationRound, NO_MAJORITY): TxPreparationRound
     (TxPreparationRound, ROUND_TIMEOUT): TxPreparationRound
 

@@ -20,13 +20,14 @@
 """This package contains the rounds of LearningAbciApp."""
 
 from enum import Enum
-from typing import Dict, FrozenSet, Optional, Set, Tuple
+from typing import Dict, FrozenSet, Optional, Set, Tuple, cast
 
 from packages.valory.skills.abstract_round_abci.base import (
     AbciApp,
     AbciAppTransitionFunction,
     AppState,
     BaseSynchronizedData,
+    CollectDifferentUntilAllRound,
     CollectSameUntilThresholdRound,
     CollectionRound,
     DegenerateRound,
@@ -172,18 +173,16 @@ class DefiLlamaPullRound(CollectSameUntilThresholdRound):
 
     # Event.ROUND_TIMEOUT  # this needs to be referenced for static checkers
 
-class ExecuteLLMRound(CollectSameUntilThresholdRound):
+class ExecuteLLMRound(OnlyKeeperSendsRound):
     """ExecuteLLMRound"""
 
     payload_class = ExecuteLLMPayload
     synchronized_data_class = SynchronizedData
+    keeper_payload: Optional[ExecuteLLMPayload] = None
+
     done_event = Event.DONE
-    none_event = Event.NONE
     no_majority_event = Event.NO_MAJORITY
-    collection_key = get_name(SynchronizedData.stablecoins_history)
-    selection_key = (
-        get_name(SynchronizedData.llm_response)
-    )
+    payload_key = "llm_response"
 
     # Event.ROUND_TIMEOUT  # this needs to be referenced for static checkers
 
@@ -265,8 +264,8 @@ class CollectDefiApp(AbciApp[Event]):
         DecisionMakingRound: {
             Event.NO_MAJORITY: DecisionMakingRound,
             Event.ROUND_TIMEOUT: DecisionMakingRound,
-            Event.DONE: FinishedDecisionMakingRound,
-            Event.ERROR: FinishedDecisionMakingRound,
+            Event.DONE: TxPreparationRound,
+            Event.ERROR: CollectRandomnessRound,
             Event.TRANSACT: TxPreparationRound,
         },
         TxPreparationRound: {

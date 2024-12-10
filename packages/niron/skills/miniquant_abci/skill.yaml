@@ -8,9 +8,9 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeialbmkt642ga4cc4vonaei6klzbrynaylpsy2lunibja2uim5bbme
   behaviours.py: bafybeigjtfkojbesk2xamgr7e7spgaiyspdrbczqnbpjrmkwzsx6uutrdi
-  composition.py: bafybeidrfx6fq5icoxfa6hljhe3vnxdcctlikrn3l6ktkdffnwp6v2x5py
+  composition.py: bafybeigkhbjhqflr45lci4mvwidkjvyl7kqtyaylccetyphnryfewlpsem
   dialogues.py: bafybeifqjbumctlffx2xvpga2kcenezhe47qhksvgmaylyp5ypwqgfar5u
-  fsm_specification.yaml: bafybeibiqdol37cqtozebjzh5cgsdm3qvrbnq2ko37j3y4lfola4wfi3bm
+  fsm_specification.yaml: bafybeigqlbvcrzbn4d6qloqvj33ea5xaznihrxh26o7rcitnl7nmrh3t2y
   handlers.py: bafybeigjadr4thz6hfpfx5abezbwnqhbxmachf4efasrn4z2vqhsqgnyvi
   models.py: bafybeif65ylze4pdu2avdxazixdwj2puo3bz2ldfww4dnjos5mdvridiui
 fingerprint_ignore_patterns: []
@@ -23,7 +23,7 @@ skills:
 - valory/reset_pause_abci:0.1.0:bafybeif4lgvbzsmzljesxbphycdv52ka7qnihyjrjpfaseclxadcmm6yiq
 - valory/termination_abci:0.1.0:bafybeiekkpo5qef5zaeagm3si6v45qxcojvtjqe4a5ceccvk4q7k3xi3bi
 - valory/transaction_settlement_abci:0.1.0:bafybeielv6eivt2z6nforq43xewl2vmpfwpdu2s2vfogobziljnwsclmlm
-- niron/collect_defillama_abci:0.1.0:bafybeih2qdbdea5pmrqzk5hlivgt4fb7wfhsvcu4baxzvgsx3uex7kdzfa
+- niron/collect_defillama_abci:0.1.0:bafybeihyrnjwc7s5ikbitunhq5e23xekdh53fiyijqkft44chreyyyqvaq
 behaviours:
   main:
     args: {}

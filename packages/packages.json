@@ -1,9 +1,9 @@
 {
     "dev": {
-        "skill/niron/miniquant_abci/0.1.0": "bafybeiersknmocsg4nevxj65ddkvy3ahufksxibb7fos6bfgzcsgeemqoe",
-        "skill/niron/collect_defillama_abci/0.1.0": "bafybeihyrnjwc7s5ikbitunhq5e23xekdh53fiyijqkft44chreyyyqvaq",
-        "agent/niron/miniquant_agent/0.1.0": "bafybeifpg7xupyqqsy3zqgcnxbwl7vyb6644tbjhxfm4rcq5jkm4k3ufee",
-        "service/niron/miniquant_service/0.1.0": "bafybeicoeknlrwyrqgq5x7igoic7gysbdty7wqmhohrfhmarsmows54baq"
+        "skill/niron/miniquant_abci/0.1.0": "bafybeieynu3mifvb7js5r4274eurpomuguddnct5wywm6n3ov567uwq2ja",
+        "skill/niron/collect_defillama_abci/0.1.0": "bafybeiayxvlruhx4bbwszmzndv5nkq2x2v5znri2c3ousi7wlnwix47x4u",
+        "agent/niron/miniquant_agent/0.1.0": "bafybeief5u2btetxvnv5t3x5oww7w2wyguswc4qfhvqxmvviexkuazq2uu",
+        "service/niron/miniquant_service/0.1.0": "bafybeihu3fmx35tg2tu5bqpdcoenwx36aqywo5u7q7cwee23mtctacbfcy"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi",

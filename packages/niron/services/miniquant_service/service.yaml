@@ -7,7 +7,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid42pdrf6qrohedylj4ijrss236ai6geqgf3he44huowiuf7pl464
 fingerprint_ignore_patterns: []
-agent: niron/miniquant_agent:0.1.0:bafybeifpg7xupyqqsy3zqgcnxbwl7vyb6644tbjhxfm4rcq5jkm4k3ufee
+agent: niron/miniquant_agent:0.1.0:bafybeief5u2btetxvnv5t3x5oww7w2wyguswc4qfhvqxmvviexkuazq2uu
 number_of_agents: 2
 deployment:
   agent:

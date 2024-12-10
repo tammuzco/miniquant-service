@@ -264,7 +264,7 @@ class CollectDefiApp(AbciApp[Event]):
         DecisionMakingRound: {
             Event.NO_MAJORITY: DecisionMakingRound,
             Event.ROUND_TIMEOUT: DecisionMakingRound,
-            Event.DONE: TxPreparationRound,
+            Event.DONE: CollectRandomnessRound,
             Event.ERROR: CollectRandomnessRound,
             Event.TRANSACT: TxPreparationRound,
         },
